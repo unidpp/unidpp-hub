@@ -1,0 +1,19 @@
+[package]
+name = "unidpp-hub"
+description = "The UniDPP translation hub: a stateless signed relay between willing pairs divided by protocols — the SI-3 hub contract as an operable service"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+repository = "https://github.com/unidpp/unidpp-hub"
+rust-version = "1.75"
+
+[dependencies]
+unidpp-signatif = { path = "../unidpp-signatif" }
+unidpp-model = { path = "../unidpp-core/crates/model" }
+axum = "0.8"
+tokio = { version = "1", features = ["macros", "net", "rt-multi-thread"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[dev-dependencies]
+tower = { version = "0.5", features = ["util"] }
