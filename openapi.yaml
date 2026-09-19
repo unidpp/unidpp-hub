@@ -1,0 +1,117 @@
+components: {}
+info:
+  description: 'The UniDPP translation hub is a stateless signed relay between willing pairs divided by protocols (the SI-3 hub contract as an operable service). The hub carries no storage: the caller supplies both sides'' published interoperability declarations and the evidence, the hub checks willingness both ways (a scheme that declines interoperability is never brokered around — the WILL gap is not the hub''s to bridge), signs the forwarded bytes plus the relay metadata in the HUB-RELAY domain, and returns the relayed evidence; after the relay the hub holds nothing. Every relay verifies under the keyring''s public key, at the hub or at any third party. No message of this service names a master: a pair that speaks directly has no need of it, and a pair divided by protocols loses no assurance by using it.'
+  license:
+    identifier: Apache-2.0
+    name: Apache-2.0
+  title: UniDPP hub
+  version: 0.1.0
+  x-unidpp-env-keys:
+  - UNIDPP_HUB_BIND
+  - UNIDPP_HUB_ID
+  - UNIDPP_HUB_SEED
+openapi: 3.1.0
+paths:
+  /:
+    get:
+      operationId: discovery
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: 'The discovery document: the service identity, the hub id, the endpoint map and the contract statements — statelessness, two-way willingness, signed relays, no master'
+      summary: Serve the discovery document.
+      tags:
+      - hub
+  /healthz:
+    get:
+      operationId: healthz
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: The service is serving
+      summary: Answer the liveness probe.
+      tags:
+      - hub
+  /keyring:
+    get:
+      operationId: keyring
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: 'The keyring: the relay role''s suite and public key, under which every relay signature verifies, and the keyring mode'
+      summary: Serve the hub's public key.
+      tags:
+      - hub
+  /relay:
+    post:
+      description: |-
+        The hub checks willingness both ways, forwards the evidence bytes,
+        signs the relay in the HUB-RELAY domain over the forwarded bytes
+        plus the relay metadata, and retains nothing.
+      operationId: relay
+      requestBody:
+        content:
+          application/json:
+            schema: {}
+        description: 'The relay request: `{"from": ..., "to": ..., "data_class": ..., "evidence_hex": ..., "declarations": [declaration, ...]}` — the declarations carry both sides'' published interoperability postures, because the hub holds no posture state of its own'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: 'The evidence is relayed: the signed relay (hub id, parties, class, evidence digest, signature) and the forwarded bytes are returned, and nothing is retained'
+        '400':
+          content:
+            application/json:
+              schema: {}
+          description: Invalid JSON syntax, or an `evidence_hex` that is not hex
+        '422':
+          content:
+            application/json:
+              schema: {}
+          description: 'The relay is refused: a side declines the class or publishes no declaration for it; the refusal states the declining side and the gap, and carries `refused: true`'
+      summary: Relay evidence between two willing schemes.
+      tags:
+      - hub
+  /relay/verify:
+    post:
+      description: |-
+        The check is the recipient's, offered by the hub itself so that
+        any third party can run the verification without linking the
+        crate; linking the crate is equally conforming.
+      operationId: relay_verify
+      requestBody:
+        content:
+          application/json:
+            schema: {}
+        description: 'The verification request: `{"evidence_hex": ..., "relay": {..}}` — the relay exactly as returned by `POST /relay`'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: 'The verification verdict: `verified` is `true` and the evidence digest is stated, or `verified` is `false` and the verification error is stated; both outcomes answer 200'
+        '400':
+          content:
+            application/json:
+              schema: {}
+          description: Invalid JSON syntax, or an `evidence_hex` that is not hex
+        '422':
+          content:
+            application/json:
+              schema: {}
+          description: The body does not deserialize into a relay verification request
+      summary: Verify a relayed evidence under this hub's key.
+      tags:
+      - hub
+tags:
+- description: 'The hub surface: discovery, liveness, the keyring, the relay and its verification'
+  name: hub
