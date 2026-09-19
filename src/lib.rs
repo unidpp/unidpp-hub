@@ -238,6 +238,7 @@ struct RelayRequest {
     responses(
         (status = 200, description = "The evidence is relayed: the signed relay (hub id, parties, class, evidence digest, signature) and the forwarded bytes are returned, and nothing is retained", body = Value, content_type = "application/json"),
         (status = 400, description = "Invalid JSON syntax, or an `evidence_hex` that is not hex", body = Value, content_type = "application/json"),
+        (status = 415, description = "The request carries no `application/json` content type", body = Value, content_type = "application/json"),
         (status = 422, description = "The relay is refused: a side declines the class or publishes no declaration for it; the refusal states the declining side and the gap, and carries `refused: true`", body = Value, content_type = "application/json"),
     )
 )]
@@ -299,6 +300,7 @@ struct RelayVerifyRequest {
     responses(
         (status = 200, description = "The verification verdict: `verified` is `true` and the evidence digest is stated, or `verified` is `false` and the verification error is stated; both outcomes answer 200", body = Value, content_type = "application/json"),
         (status = 400, description = "Invalid JSON syntax, or an `evidence_hex` that is not hex", body = Value, content_type = "application/json"),
+        (status = 415, description = "The request carries no `application/json` content type", body = Value, content_type = "application/json"),
         (status = 422, description = "The body does not deserialize into a relay verification request", body = Value, content_type = "application/json"),
     )
 )]

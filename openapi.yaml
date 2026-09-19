@@ -72,6 +72,11 @@ paths:
             application/json:
               schema: {}
           description: Invalid JSON syntax, or an `evidence_hex` that is not hex
+        '415':
+          content:
+            application/json:
+              schema: {}
+          description: The request carries no `application/json` content type
         '422':
           content:
             application/json:
@@ -104,6 +109,11 @@ paths:
             application/json:
               schema: {}
           description: Invalid JSON syntax, or an `evidence_hex` that is not hex
+        '415':
+          content:
+            application/json:
+              schema: {}
+          description: The request carries no `application/json` content type
         '422':
           content:
             application/json:
