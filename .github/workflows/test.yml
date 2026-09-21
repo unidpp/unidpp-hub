@@ -24,7 +24,9 @@ jobs:
         with:
           repository: unidpp/unidpp-signatif
           path: unidpp-signatif
-      - uses: dtolnay/rust-toolchain@stable
+      # No toolchain step: rustup resolves rust-toolchain.toml at
+      # every cargo invocation, so CI installs and formats with the
+      # exact pinned generation (the file is the single source).
       - run: cargo fmt --check
       - run: cargo clippy --all-targets -- -D warnings
       - run: cargo test
